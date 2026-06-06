@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Milton fork build: netstandard2.1 managed assembly, win-x64, unsafe enabled for the
+	     NativeAOT-safe union patches in SteamNetworkingConfigValue_t and SteamDatagramRelayAuthTicket. -->
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<RootNamespace>Steamworks</RootNamespace>
+		<AssemblyName>Steamworks.NET</AssemblyName>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Optimize>true</Optimize>
+		<DefineConstants>TRACE;STEAMWORKS_WIN;STEAMWORKS_X64</DefineConstants>
+		<Deterministic>true</Deterministic>
+		<OutputPath>bin\Milton\</OutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="../com.rlabrecque.steamworks.net/Runtime/**/*.cs" />
+	</ItemGroup>
+
+</Project>

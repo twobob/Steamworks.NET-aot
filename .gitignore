@@ -3,3 +3,9 @@ obj/
 .vs/
 __pycache__/
 /CodeGen/steam/lib/
+
+# Milton AOT patched build output (committed intentionally)
+!Standalone/bin/
+Standalone/bin/*
+!Standalone/bin/Milton/
+Standalone/build.txt

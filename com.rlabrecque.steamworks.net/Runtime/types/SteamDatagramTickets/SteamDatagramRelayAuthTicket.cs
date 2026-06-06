@@ -111,15 +111,15 @@ namespace Steamworks
 			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
 			byte[] m_szName;
 
-			[StructLayout(LayoutKind.Explicit)]
-			struct OptionValue
+			// NativeAOT patch (Milton fork): the original used [StructLayout(LayoutKind.Explicit)]
+			// overlapping a managed byte[] with value types at offset 0. ILC rejects a managed
+			// reference overlapping value types. We keep the identical 128-byte native ABI via a
+			// blittable inline fixed buffer (mirrors upstream PR #741's FixedBytes128 approach).
+			[StructLayout(LayoutKind.Explicit, Size = 128)]
+			unsafe struct OptionValue
 			{
 				[FieldOffset(0)]
-				[MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-				byte[] m_szStringValue;
-
-				[FieldOffset(0)]
-				long m_nIntValue;
+				fixed byte m_szStringValue[128];
 
 				[FieldOffset(0)]
 				ulong m_nFixed64Value;

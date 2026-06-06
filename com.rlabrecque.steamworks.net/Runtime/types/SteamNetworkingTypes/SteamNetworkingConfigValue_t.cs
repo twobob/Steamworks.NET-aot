@@ -40,23 +40,45 @@ namespace Steamworks
 		/// Option value
 		public OptionValue m_val;
 
-		[StructLayout(LayoutKind.Explicit)]
+		// NativeAOT patch (Milton fork): the original used [StructLayout(LayoutKind.Explicit)]
+		// with IntPtr fields overlapping value types at offset 0. ILC rejects overlapping a
+		// pointer-shaped field with non-pointer value types ("because of field offset '0'").
+		// We keep the identical 8-byte native ABI via a single blittable backing field and
+		// expose the original members as properties, so callers are unchanged and AOT compiles.
+		[StructLayout(LayoutKind.Sequential)]
 		public struct OptionValue
 		{
-			[FieldOffset(0)]
-			public int m_int32;
+			private long m_storage;
 
-			[FieldOffset(0)]
-			public long m_int64;
+			public int m_int32
+			{
+				get { return (int)m_storage; }
+				set { m_storage = value; }
+			}
 
-			[FieldOffset(0)]
-			public float m_float;
+			public long m_int64
+			{
+				get { return m_storage; }
+				set { m_storage = value; }
+			}
 
-			[FieldOffset(0)]
-			public IntPtr m_string; // Points to your '\0'-terminated buffer
+			public unsafe float m_float
+			{
+				get { int v = (int)m_storage; return *(float*)&v; }
+				set { int v = *(int*)&value; m_storage = v; }
+			}
 
-			[FieldOffset(0)]
-			public IntPtr m_functionPtr;
+			public IntPtr m_string // Points to your '\0'-terminated buffer
+			{
+				get { return (IntPtr)m_storage; }
+				set { m_storage = (long)value; }
+			}
+
+			public IntPtr m_functionPtr
+			{
+				get { return (IntPtr)m_storage; }
+				set { m_storage = (long)value; }
+			}
 		}
 	}
 }
