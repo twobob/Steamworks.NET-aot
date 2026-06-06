@@ -1,2 +1,4 @@
 *.uid
 *.import
+obj/
+bin/
